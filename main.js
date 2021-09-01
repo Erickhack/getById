@@ -73,7 +73,25 @@ methods.set('/posts.post', ({res, searchParams}) => {
     posts.unshift(post);
     sendJSON(res, post);
 });
-methods.set('/posts.edit', ({}) => {});
+methods.set('/posts.edit', ({res, searchParams}) => {
+    const editId = +searchParams.get('id');
+    const editContent = searchParams.get('content');
+
+    if (isNaN(editId) || !searchParams.has('id') || !searchParams.has('content')) {
+        sendResponse(res, {status: statusBadReq, body: errorHtml});
+        return;
+    }
+
+    const postId = posts.find(i => i.id === +editId);
+
+    if (postId === undefined) {
+        sendResponse(res, {status: statusNotFaund, body: errorHtml});
+        return;
+    }
+
+    postId.content = editContent;
+    sendJSON(res, postId);
+});
 methods.set('/posts.delete', ({}) => {});
 
 http.createServer((req, res) => {
