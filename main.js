@@ -41,23 +41,18 @@ methods.set('/posts.get', ({res}) => {
 });
 methods.set('/posts.getById', ({res, searchParams}) => {
     if (!searchParams.has('id')) {
-        sendResponse(res, {status: statusNotFaund, body: errorHtml});
-        return;
-    }
-    
-    const id = searchParams.get('id');
-
-    if (id === undefined || isNaN(id) || posts.length === 0) {
         sendResponse(res, {status: statusBadReq, body: errorHtml});
         return;
     }
-    const idPost = posts.filter(o => o.id === parseInt(id, 10));
-    const okHtml = `
-    <h1>Ok</h1>
-    <p>${JSON.stringify(idPost)}</p>
-    <hr/>
-    <i>Apache/2.4.47 (Win64) OpenSSL/1.1.1k PHP/7.4.19 Server at localhost Port 80</i>
-    `;
+    
+    // const idPost = posts.filter(o => o.id === parseInt(id, 10));
+    const id = searchParams.get('id');
+    const idPost = posts.find(i => i.id === +id);
+
+    if (idPost === undefined) {
+        sendResponse(res, {status: statusNotFaund, body: errorHtml});
+        return;
+    }
     sendJSON(res, idPost);
 });
 methods.set('/posts.post', ({res, searchParams}) => {
