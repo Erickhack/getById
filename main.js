@@ -40,13 +40,14 @@ methods.set('/posts.get', ({res}) => {
     sendJSON(res, posts);
 });
 methods.set('/posts.getById', ({res, searchParams}) => {
-    if (!searchParams.has('id')) {
+    const id = +searchParams.get('id');
+
+    if (!searchParams.has('id') || isNaN(id)) {
         sendResponse(res, {status: statusBadReq, body: errorHtml});
         return;
     }
     
     // const idPost = posts.filter(o => o.id === parseInt(id, 10));
-    const id = searchParams.get('id');
     const idPost = posts.find(i => i.id === +id);
 
     if (idPost === undefined) {
