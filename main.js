@@ -92,7 +92,25 @@ methods.set('/posts.edit', ({res, searchParams}) => {
     postId.content = editContent;
     sendJSON(res, postId);
 });
-methods.set('/posts.delete', ({}) => {});
+methods.set('/posts.delete', ({res, searchParams}) => {
+    const delId = +searchParams.get('id');
+    console.log(delId);
+    if (!searchParams.has('id') || isNaN(delId)) {
+        sendResponse(res, {status: statusBadReq, body: errorHtml});
+        return;
+    }
+
+    const findId = +posts.findIndex(i => i.id === delId);
+    // const findId = posts.find(i => i === delId);
+
+    if (findId === -1) {
+        sendResponse(res, {status: statusNotFaund, body: errorHtml});
+        return;
+    }
+
+    sendJSON(res, posts[findId]);
+    posts.splice(findId, 1);
+});
 
 http.createServer((req, res) => {
     const {pathname, searchParams} = new URL(req.url, `http://${req.headers.host}`);
